@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="czytelnia_lite_ant">
+	<!-- <project name="czytelnia_lite_ant" default="compile"> -->
+	<property name="lib.dir" location="lib">
+	</property>
+	<property name="bin.dir" location="bin">
+	</property>
+	<property name="dist.dir" location="dist">
+	</property>
+	<property name="src.dir" location="src">
+	</property>
+	<property name="testbin.dir" location="testbin">
+	</property>
+	
+	<target name="clean" description="Czyszczenie katalogów z plików.">
+		<delete includeemptydirs="true" failonerror="yes">
+			<fileset dir="${bin.dir}" includes="**/*" />
+		</delete>		
+		<delete includeemptydirs="true" failonerror="yes">
+			<fileset dir="${testbin.dir}" includes="**/*" />
+		</delete>		
+
+		<echo>Katalogi wyczyszczone</echo>
+	</target>
+
+	<target name="init" description="Tworzenie struktury katalogów w projekcie.">
+		<tstamp />		 
+		<mkdir dir="${bin.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${testbin.dir}" />
+		<echo>Katalogi stworzone</echo>
+	</target>
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar">
+		</fileset>
+		<pathelement location="${bin.dir}" />
+	</path>
+
+	<target name="compile" depends="init" description="Kompilacja klas.">
+		<javac srcdir="${src.dir}" destdir="${bin.dir}" classpathref="classpath" includeantruntime="false" />
+	</target>
+
+	<target name="jar" depends="compile" description="Tworzenie jara.">
+		<jar destfile="${dist.dir}/czytelnia_lite.jar" basedir="bin">
+		</jar>
+	</target>
+	
+
+	<target name="clean_class" description="Usunięcie plików class">
+		<delete dir="${bin.dir}">
+		</delete>
+		<delete dir="${testbin.dir}">
+		</delete>
+	</target>
+	
+	<!-- uruchomienie programu - niewykonywane - zamiast tego - kompilacja i uruchomienie testów
+	<target name="run" depends="compile">
+		<java classname="czytelnia.czytelnia_lite.Main" classpathref="classpath" />
+	</target>	
+	-->
+
+	<target name="testcompile" depends="compile" description="Testowanie - kompilacja.">
+		<javac srcdir="${src.dir}\test" destdir="${testbin.dir}" classpathref="classpath" includeantruntime="false">
+		</javac>
+	</target>
+
+	<target name="runtests" depends="testcompile" description="Uruchamianie testów.">
+		<junit printsummary="yes" haltonerror="false" haltonfailure="false">
+			
+			<classpath>
+				<fileset dir="${lib.dir}" includes="**/*.jar">
+				</fileset>
+				<pathelement location="${bin.dir}" />
+				<pathelement location="${testbin.dir}" />
+				<pathelement location="${src.dir}\test" />
+			</classpath>			
+
+			<test name="test.Ctesty"/>
+			
+		</junit>
+	</target>
+
+
+</project>
+
+
+
+
+
+
+
+
+
+
